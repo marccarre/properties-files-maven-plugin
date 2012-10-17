@@ -6,6 +6,7 @@
 .project
 .metadata
 bin/
+target/
 tmp/
 *.tmp
 *.bak
@@ -161,3 +162,4 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+._.gitignore
