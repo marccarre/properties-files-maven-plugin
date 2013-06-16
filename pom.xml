@@ -1,5 +1,5 @@
 <!--
-  Copyright 2012 Marc CARRE
+  Copyright 2012-2013 Marc CARRE
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -28,6 +28,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<javaVersion>1.6</javaVersion>
+		<guavaVersion>14.0.1</guavaVersion>
+		<apacheCommonsVersion>3.1</apacheCommonsVersion>
 		<mavenVersion>2.2.1</mavenVersion>
 		<mavenPluginVersion>3.1</mavenPluginVersion>
 		<pluginTestingVersion>1.2</pluginTestingVersion>
@@ -35,6 +37,16 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guavaVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${apacheCommonsVersion}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>

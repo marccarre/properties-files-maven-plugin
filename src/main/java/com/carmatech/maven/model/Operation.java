@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 Marc CARRE
+ * Copyright 2012-2013 Marc CARRE
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,18 +14,26 @@
  ******************************************************************************/
 package com.carmatech.maven.model;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.FileSet;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.FileUtils;
-
-import com.carmatech.maven.utils.StringUtils;
 
 public class Operation {
 
@@ -37,50 +45,52 @@ public class Operation {
 	@Parameter(required = true)
 	private FileSet[] fileSets;
 
-	public void generateTargetFile() throws IOException {
-		validateFileSets();
-		validateTargetFile();
-		File defaultDir = new File(System.getProperty("user.dir"));
+	public void mergePropertiesToTargetFile() throws IOException {
+		checkNotNull(fileSets, "Valid file sets must be provided: file sets were null.");
+		checkArgument(fileSets.length != 0, "Valid file sets must be provided: file sets were empty.");
+		checkNotNull(targetFile, "A valid target file path must be provided.");
 
-		Properties properties = new Properties();
-
-		for (FileSet fileSet : fileSets) {
-			List<File> files = toFiles(fileSet, defaultDir);
-
-			for (File file : files) {
-				properties.putAll(toProperties(file));
-			}
-		}
-
-		properties.store(new FileOutputStream(targetFile), null);
+		final List<File> files = findAllFiles();
+		final Properties allProperties = mergePropertiesFrom(files);
+		saveToTargetFile(allProperties);
 	}
 
-	private void validateTargetFile() {
-		if (targetFile == null) {
-			throw new IllegalArgumentException("A valid target file path must be provided.");
+	private List<File> findAllFiles() throws IOException {
+		final List<File> files = new LinkedList<File>();
+		for (final FileSet fileSet : fileSets) {
+			files.addAll(toFiles(fileSet));
 		}
-	}
-
-	private void validateFileSets() {
-		if ((fileSets == null) || (fileSets.length == 0)) {
-			throw new IllegalArgumentException("Valid file sets must be provided.");
-		}
-	}
-
-	private List<File> toFiles(FileSet fileSet, File defaultDirectory) throws IOException {
-		File directory = new File(fileSet.getDirectory());
-		String includes = StringUtils.join(fileSet.getIncludes(), COMMA);
-		String excludes = StringUtils.join(fileSet.getExcludes(), COMMA);
-
-		List<File> files = FileUtils.getFiles(directory, includes, excludes);
 		return files;
 	}
 
-	private Properties toProperties(File file) throws IOException {
-		Properties properties = new Properties();
-		FileInputStream in = new FileInputStream(file);
+	private List<File> toFiles(final FileSet fileSet) throws IOException {
+		final File directory = new File(fileSet.getDirectory());
+		final String includes = StringUtils.join(fileSet.getIncludes(), COMMA);
+		final String excludes = StringUtils.join(fileSet.getExcludes(), COMMA);
+
+		return FileUtils.getFiles(directory, includes, excludes);
+	}
+
+	private Properties mergePropertiesFrom(final List<File> files) throws IOException {
+		final Properties properties = new Properties();
+		for (final File file : files) {
+			properties.putAll(toProperties(file));
+		}
+		return properties;
+	}
+
+	private Properties toProperties(final File propertiesFile) throws IOException {
+		final Properties properties = new Properties();
+		final InputStream in = new BufferedInputStream(new FileInputStream(propertiesFile));
 		properties.load(in);
 		in.close();
 		return properties;
+	}
+
+	private void saveToTargetFile(final Properties properties) throws FileNotFoundException, IOException {
+		final OutputStream out = new BufferedOutputStream(new FileOutputStream(targetFile));
+		properties.store(out, null);
+		out.flush();
+		out.close();
 	}
 }

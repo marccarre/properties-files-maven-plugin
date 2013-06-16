@@ -36,17 +36,17 @@
 				<configuration>
 					<operations>
 						<operation>
-							<targetFile>${basedir}\target\test-classes\unit\props\target.properties</targetFile>
+							<targetFile>${basedir}/target/test-classes/unit/props/target.properties</targetFile>
 							<fileSets>
 								<fileSet>
-									<directory>${basedir}\target\test-classes\unit\props\</directory>
+									<directory>${basedir}/target/test-classes/unit/props</directory>
 									<includes>
 										<include>a.properties</include>
 										<include>b.properties</include>
 									</includes>
 								</fileSet>
 								<fileSet>
-									<directory>${basedir}\target\test-classes\unit\props\env</directory>
+									<directory>${basedir}/target/test-classes/unit/props/env</directory>
 									<includes>
 										<include>**/*.properties</include>
 									</includes>

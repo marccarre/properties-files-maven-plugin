@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 Marc CARRE
+ * Copyright 2012-2013 Marc CARRE
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,8 +14,6 @@
  ******************************************************************************/
 package com.carmatech.maven;
 
-import java.io.IOException;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -25,30 +23,13 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import com.carmatech.maven.model.Operation;
 
-///**
-// * Merge properties files
-// * 
-// * @author <a href="mailto:carre.marc@gmail.com">Marc CARRE</a>
-// * @goal merge
-// * @requiresProject
-// */
+/**
+ * Utilities to manipulate and process properties files.
+ * 
+ * @author <a href="mailto:carre.marc@gmail.com">Marc CARRE</a>
+ */
 @Mojo(name = "merge", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true, requiresProject = true)
-// @Execute(goal = "merge", phase = LifecyclePhase.PROCESS_RESOURCES, lifecycle = "merge-default")
-public class PropertiesFilesMojo extends AbstractMojo /* implements Contextualizable */{
-	// private PlexusContainer plexusContainer;
-	// /**
-	// * @parameter default-value="${project}"
-	// * @required
-	// * @readonly
-	// */
-	// private MavenProject project;
-	// @Component
-	// protected MavenProject project;
-	// @Parameter(defaultValue = "${project}", required = true, readonly = true)
-	// protected MavenProject project;
-	//
-	// @Parameter(readonly = true, defaultValue = "${basedir}")
-	// private File basedir;
+public class PropertiesFilesMojo extends AbstractMojo {
 
 	@Parameter(required = true)
 	private Operation[] operations;
@@ -57,12 +38,12 @@ public class PropertiesFilesMojo extends AbstractMojo /* implements Contextualiz
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		validateOperations();
 
-		for (Operation op : operations) {
-			try {
-				op.generateTargetFile();
-			} catch (IOException e) {
-				throw new MojoExecutionException(e.getMessage(), e);
+		try {
+			for (final Operation operation : operations) {
+				operation.mergePropertiesToTargetFile();
 			}
+		} catch (Exception e) {
+			throw new MojoExecutionException(e.getMessage(), e);
 		}
 	}
 
@@ -71,9 +52,4 @@ public class PropertiesFilesMojo extends AbstractMojo /* implements Contextualiz
 			throw new MojoExecutionException("An operation should be defined for maven-properties-files-plugin to work.");
 		}
 	}
-	//
-	// @Override
-	// public void contextualize(Context context) throws ContextException {
-	// plexusContainer = (PlexusContainer) context.get(PlexusConstants.PLEXUS_KEY);
-	// }
 }
