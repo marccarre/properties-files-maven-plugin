@@ -1,19 +1,50 @@
- Copyright 2012 Marc CARRE
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- 
-   http://www.apache.org/licenses/LICENSE-2.0
- 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+A Maven plugin to manipulate properties files in an easy way.
+Features:
+  - Merge multiple properties files into a single one.
 
 *******************************************************************************
+**Example**:
 
-A Maven plugin to manipulate properties files in an easy way, and copy them, 
-merge them, substitute their values, etc.
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.carmatech.maven</groupId>
+                <artifactId>properties-files-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <operations>
+                        <operation>
+                            <targetFile>${basedir}/target/test-classes/poms/target_02.properties</targetFile>
+                            <sourceFileSets>
+                                <sourceFileSet>
+                                    <directory>${basedir}/target/test-classes/poms</directory>
+                                    <includes>
+                                        <include>a.properties</include>
+                                        <include>b.properties</include>
+                                    </includes>
+                                </sourceFileSet>
+                                <sourceFileSet>
+                                    <directory>${basedir}/target/test-classes/poms/env</directory>
+                                    <includes>
+                                        <include>**/*.properties</include>
+                                    </includes>
+                                </sourceFileSet>
+                            </sourceFileSets>
+                        </operation>
+                    </operations>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 
 *******************************************************************************
+Copyright 2012-2013 Marc CARRE - Licensed under the Apache License, Version 2.0 (the "License");
+
