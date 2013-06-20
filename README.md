@@ -1,4 +1,5 @@
 A Maven plugin to manipulate properties files in an easy way.
+
 Features:
   - Merge multiple properties files into a single one.
 
@@ -21,17 +22,17 @@ Features:
                 <configuration>
                     <operations>
                         <operation>
-                            <targetFile>${basedir}/target/test-classes/poms/target_02.properties</targetFile>
+                            <targetFile>${basedir}/target/merged.properties</targetFile>
                             <sourceFileSets>
                                 <sourceFileSet>
-                                    <directory>${basedir}/target/test-classes/poms</directory>
+                                    <directory>${basedir}/src/main/resources</directory>
                                     <includes>
                                         <include>a.properties</include>
                                         <include>b.properties</include>
                                     </includes>
                                 </sourceFileSet>
                                 <sourceFileSet>
-                                    <directory>${basedir}/target/test-classes/poms/env</directory>
+                                    <directory>${basedir}/src/main/resources/env</directory>
                                     <includes>
                                         <include>**/*.properties</include>
                                     </includes>
@@ -44,7 +45,4 @@ Features:
         </plugins>
     </build>
 
-
-*******************************************************************************
-Copyright 2012-2013 Marc CARRE - Licensed under the Apache License, Version 2.0 (the "License");
 
