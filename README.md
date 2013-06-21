@@ -1,8 +1,8 @@
 A Maven plugin to manipulate properties files in an easy way.
 
 Features:
-  1. Merge multiple properties files into a single one.
-  2. Merge multiple properties files into a single one, in parallel.
+  - Merge multiple properties files into a single one.
+  - Merge multiple properties files into a single one, in parallel.
 
 *******************************************************************************
 **Example #1** - Merge using default merger (parallel merger):
