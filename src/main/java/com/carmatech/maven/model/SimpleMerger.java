@@ -17,6 +17,7 @@ package com.carmatech.maven.model;
 import static com.carmatech.maven.utils.MergeUtils.generateComment;
 import static com.carmatech.maven.utils.MergeUtils.savePropertiesTo;
 import static com.carmatech.maven.utils.MergeUtils.toProperties;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,15 +25,19 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
-public class SimpleMerger implements IMerger {
-	private static IMerger INSTANCE = new SimpleMerger();
+import org.apache.maven.plugin.logging.Log;
 
-	public static IMerger getInstance() {
-		return INSTANCE;
+public class SimpleMerger implements IMerger {
+	private final Log logger;
+
+	public SimpleMerger(final Log logger) {
+		checkNotNull(logger, "Logger must NOT be null.");
+		this.logger = logger;
 	}
 
 	@Override
 	public void mergeTo(final File targetFile, final List<File> sourceFiles) throws IOException, FileNotFoundException {
+		logger.info("Merging [" + targetFile.getName() + "] using " + SimpleMerger.class.getSimpleName() + "...");
 		final Properties allProperties = mergePropertiesFrom(sourceFiles);
 		savePropertiesTo(targetFile, allProperties, generateComment(SimpleMerger.class));
 	}

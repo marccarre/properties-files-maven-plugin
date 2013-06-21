@@ -19,14 +19,22 @@ import org.apache.maven.plugin.logging.Log;
 import com.carmatech.maven.utils.ThreadingUtils;
 
 public class MergerFactory {
-	public static IMerger getMerger(final Log logger, final int numTotalSourceFiles) {
+	public static IMerger getMerger(final Log logger, final int numTotalSourceFiles, final boolean parallel) {
 		switch (numTotalSourceFiles) {
 		case 1:
-			logger.info("Creating " + SimpleMerger.class.getSimpleName() + "...");
-			return SimpleMerger.getInstance();
+			return getSimpleMerger(logger);
 		default:
-			logger.info("Creating " + ParallelMerger.class.getSimpleName() + "...");
-			return new ParallelMerger(logger, ThreadingUtils.createThreadPool(logger, numTotalSourceFiles));
+			return parallel ? getParallelMerger(logger, numTotalSourceFiles) : getSimpleMerger(logger);
 		}
+	}
+
+	private static IMerger getSimpleMerger(final Log logger) {
+		logger.info("Creating " + SimpleMerger.class.getSimpleName() + "...");
+		return new SimpleMerger(logger);
+	}
+
+	private static IMerger getParallelMerger(final Log logger, final int numTotalSourceFiles) {
+		logger.info("Creating " + ParallelMerger.class.getSimpleName() + "...");
+		return new ParallelMerger(logger, ThreadingUtils.createThreadPool(logger, numTotalSourceFiles));
 	}
 }

@@ -51,10 +51,10 @@ public class ParallelMerger implements IMerger {
 			savePropertiesTo(targetFile, allProperties, generateComment(ParallelMerger.class));
 		} catch (InterruptedException e) {
 			logger.warn("Parallel merger was interrupted: " + e.getMessage() + ". Falling back to simple merger...", e);
-			SimpleMerger.getInstance().mergeTo(targetFile, sourceFiles);
+			new SimpleMerger(logger).mergeTo(targetFile, sourceFiles);
 		} catch (ExecutionException e) {
 			logger.warn("Parallel merger failed to complete: " + e.getMessage() + ". Falling back to simple merger...", e);
-			SimpleMerger.getInstance().mergeTo(targetFile, sourceFiles);
+			new SimpleMerger(logger).mergeTo(targetFile, sourceFiles);
 		}
 	}
 

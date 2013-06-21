@@ -47,4 +47,18 @@ public class MergeFilesMojoTest extends AbstractMojoTestCase {
 		assertEquals("valueForEnv", properties.get("key1")); // from a.properties
 		assertEquals("valueForRegion", properties.get("key2")); // from b.properties
 	}
+
+	public void testMergeFourPropertiesFilesWithIntersectionUsingSimpleMerger() throws Exception {
+		File pom = new File(getBasedir(), "/target/test-classes/poms/testing_pom_03.xml");
+		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", pom);
+		assertNotNull(mojo);
+
+		mojo.execute();
+		File mergedPropertiesFile = new File(getBasedir(), "/target/test-classes/poms/target_03.properties");
+		Properties properties = new Properties();
+		properties.load(new FileInputStream(mergedPropertiesFile));
+		assertEquals("value0", properties.get("key0")); // from a.properties
+		assertEquals("valueForEnv", properties.get("key1")); // from a.properties
+		assertEquals("valueForRegion", properties.get("key2")); // from b.properties
+	}
 }

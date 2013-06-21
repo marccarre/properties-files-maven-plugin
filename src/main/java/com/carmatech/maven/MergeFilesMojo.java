@@ -38,6 +38,9 @@ public class MergeFilesMojo extends AbstractMojo {
 	@Parameter(required = true)
 	private MergeOperation[] operations;
 
+	@Parameter(required = false)
+	private boolean parallel = true;
+
 	private Log logger;
 
 	@Override
@@ -49,7 +52,7 @@ public class MergeFilesMojo extends AbstractMojo {
 			final int numTotalSourceFiles = countSourceFiles(operations);
 
 			for (final MergeOperation operation : operations) {
-				final IMerger merger = MergerFactory.getMerger(logger, numTotalSourceFiles);
+				final IMerger merger = MergerFactory.getMerger(logger, numTotalSourceFiles, parallel);
 				operation.merge(merger);
 			}
 		} catch (Exception e) {

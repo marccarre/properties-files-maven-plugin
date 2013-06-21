@@ -22,6 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
 
 public class SimpleMergerTest {
@@ -30,7 +32,8 @@ public class SimpleMergerTest {
 		File targetFile = new File("target/test-classes/unit/simple_merger.properties");
 		List<File> sourceFiles = getSourceFiles("src/test/resources/unit/all_formats.properties");
 
-		new SimpleMerger().mergeTo(targetFile, sourceFiles);
+		Log logger = new SystemStreamLog();
+		new SimpleMerger(logger).mergeTo(targetFile, sourceFiles);
 
 		assertThatPropertiesAreSameAsSources(targetFile);
 	}
