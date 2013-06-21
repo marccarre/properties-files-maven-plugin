@@ -14,6 +14,8 @@
  ******************************************************************************/
 package com.carmatech.maven;
 
+import java.io.IOException;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -44,13 +46,23 @@ public class MergeFilesMojo extends AbstractMojo {
 		validateOperations();
 
 		try {
+			final int numTotalSourceFiles = countSourceFiles(operations);
+
 			for (final MergeOperation operation : operations) {
-				final IMerger merger = MergerFactory.getMerger(logger);
+				final IMerger merger = MergerFactory.getMerger(logger, numTotalSourceFiles);
 				operation.merge(merger);
 			}
 		} catch (Exception e) {
 			throw new MojoExecutionException(e.getMessage(), e);
 		}
+	}
+
+	private int countSourceFiles(final MergeOperation[] operations) throws IOException {
+		int count = 0;
+		for (final MergeOperation operation : operations) {
+			count += operation.getSourceFiles().size();
+		}
+		return count;
 	}
 
 	private void validateOperations() throws MojoExecutionException {
