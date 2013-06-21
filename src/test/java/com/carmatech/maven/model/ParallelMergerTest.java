@@ -22,15 +22,20 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
 
-public class SimpleMergerTest {
+import com.carmatech.maven.utils.ThreadingUtils;
+
+public class ParallelMergerTest {
 	@Test
 	public void mergePropertiesInConsistentWay() throws FileNotFoundException, IOException {
-		File targetFile = new File("target/test-classes/unit/simple_merger.properties");
+		File targetFile = new File("target/test-classes/unit/parallel_merger.properties");
 		List<File> sourceFiles = getSourceFiles("src/test/resources/unit/all_formats.properties");
 
-		new SimpleMerger().mergeTo(targetFile, sourceFiles);
+		Log logger = new SystemStreamLog();
+		new ParallelMerger(logger, ThreadingUtils.createThreadPool(logger, sourceFiles.size())).mergeTo(targetFile, sourceFiles);
 
 		assertThatPropertiesAreSameAsSources(targetFile);
 	}

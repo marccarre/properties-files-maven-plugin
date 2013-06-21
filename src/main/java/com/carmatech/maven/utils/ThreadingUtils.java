@@ -12,26 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.carmatech.maven.model;
+package com.carmatech.maven.utils;
 
-import static com.carmatech.maven.model.MergerTestUtils.assertThatPropertiesAreSameAsSources;
-import static com.carmatech.maven.model.MergerTestUtils.getSourceFiles;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.List;
+import org.apache.maven.plugin.logging.Log;
 
-import org.junit.Test;
+public final class ThreadingUtils {
+	private ThreadingUtils() {
+		// Pure utility class, do NOT instantiate.
+	}
 
-public class SimpleMergerTest {
-	@Test
-	public void mergePropertiesInConsistentWay() throws FileNotFoundException, IOException {
-		File targetFile = new File("target/test-classes/unit/simple_merger.properties");
-		List<File> sourceFiles = getSourceFiles("src/test/resources/unit/all_formats.properties");
-
-		new SimpleMerger().mergeTo(targetFile, sourceFiles);
-
-		assertThatPropertiesAreSameAsSources(targetFile);
+	public static ExecutorService createThreadPool(final Log logger, final int totalNumFiles) {
+		final int degreeOfParallelism = Math.max(1, Math.min(Runtime.getRuntime().availableProcessors(), totalNumFiles));
+		final ExecutorService threadPool = Executors.newFixedThreadPool(degreeOfParallelism);
+		logger.info("Created thread pool of size [" + degreeOfParallelism + "] in order to merge files in parallel.");
+		return threadPool;
 	}
 }
