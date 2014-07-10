@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,73 +14,76 @@
  ******************************************************************************/
 package com.carmatech.maven.model;
 
-import static com.carmatech.maven.utils.MergeUtils.generateComment;
-import static com.carmatech.maven.utils.MergeUtils.savePropertiesTo;
-import static com.carmatech.maven.utils.MergeUtils.toProperties;
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.maven.plugin.logging.Log;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import org.apache.maven.plugin.logging.Log;
+import static com.carmatech.maven.utils.MergeUtils.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ParallelMerger implements IMerger {
-	private final Log logger;
-	private final ExecutorService threadPool;
 
-	public ParallelMerger(final Log logger, final ExecutorService threadPool) {
-		checkNotNull(logger, "Logger must NOT be null.");
-		checkNotNull(logger, "Thread pool must NOT be null.");
-		this.logger = logger;
-		this.threadPool = threadPool;
-	}
+    private final Log logger;
 
-	@Override
-	public void mergeTo(final File targetFile, final List<File> sourceFiles) throws IOException, FileNotFoundException {
-		try {
-			logger.info("Merging [" + targetFile.getName() + "] using " + ParallelMerger.class.getSimpleName() + "...");
-			final Properties allProperties = mergePropertiesFrom(sourceFiles);
-			savePropertiesTo(targetFile, allProperties, generateComment(ParallelMerger.class));
-		} catch (InterruptedException e) {
-			logger.warn("Parallel merger was interrupted: " + e.getMessage() + ". Falling back to simple merger...", e);
-			new SimpleMerger(logger).mergeTo(targetFile, sourceFiles);
-		} catch (ExecutionException e) {
-			logger.warn("Parallel merger failed to complete: " + e.getMessage() + ". Falling back to simple merger...", e);
-			new SimpleMerger(logger).mergeTo(targetFile, sourceFiles);
-		}
-	}
+    private final ExecutorService threadPool;
 
-	private Properties mergePropertiesFrom(final List<File> sourceFiles) throws IOException, InterruptedException, ExecutionException {
-		final List<Future<Properties>> futures = parallelToProperties(sourceFiles);
-		return waitForCompletionAndMergeProperties(futures);
-	}
+    public ParallelMerger(final Log logger, final ExecutorService threadPool) {
+        checkNotNull(logger, "Logger must NOT be null.");
+        checkNotNull(logger, "Thread pool must NOT be null.");
+        this.logger = logger;
+        this.threadPool = threadPool;
+    }
 
-	private List<Future<Properties>> parallelToProperties(final List<File> sourceFiles) {
-		final List<Future<Properties>> futures = new LinkedList<Future<Properties>>();
-		for (final File sourceFile : sourceFiles) {
-			futures.add(threadPool.submit(new Callable<Properties>() {
-				@Override
-				public Properties call() throws Exception {
-					return toProperties(sourceFile);
-				}
-			}));
-		}
-		return futures;
-	}
+    @Override
+    public void mergeTo(final File targetFile, final List<File> sourceFiles) throws IOException {
+        try {
+            logger.info("Merging [" + targetFile.getName() + "] using " + ParallelMerger.class.getSimpleName() + "...");
+            final PropertiesConfiguration allProperties = mergePropertiesFrom(sourceFiles);
+            savePropertiesTo(targetFile, allProperties, generateComment(ParallelMerger.class));
+        } catch (InterruptedException e) {
+            logger.warn("Parallel merger was interrupted: " + e.getMessage() + ". Falling back to simple merger...", e);
+            new SimpleMerger(logger).mergeTo(targetFile, sourceFiles);
+        } catch (ExecutionException e) {
+            logger.warn("Parallel merger failed to complete: " + e.getMessage() + ". Falling back to simple merger...", e);
+            new SimpleMerger(logger).mergeTo(targetFile, sourceFiles);
+        }
+    }
 
-	private Properties waitForCompletionAndMergeProperties(final List<Future<Properties>> futures) throws InterruptedException, ExecutionException {
-		final Properties targetProperties = new Properties();
-		for (final Future<Properties> future : futures) {
-			targetProperties.putAll(future.get());
-		}
-		return targetProperties;
-	}
+    private PropertiesConfiguration mergePropertiesFrom(final List<File> sourceFiles) throws IOException, InterruptedException, ExecutionException {
+        final List<Future<PropertiesConfiguration>> futures = parallelToProperties(sourceFiles);
+        return waitForCompletionAndMergeProperties(futures);
+    }
+
+    private List<Future<PropertiesConfiguration>> parallelToProperties(final List<File> sourceFiles) {
+        final List<Future<PropertiesConfiguration>> futures = new LinkedList<Future<PropertiesConfiguration>>();
+        for (final File sourceFile : sourceFiles) {
+            futures.add(threadPool.submit(new Callable<PropertiesConfiguration>() {
+                @Override
+                public PropertiesConfiguration call() throws Exception {
+                    return toProperties(sourceFile);
+                }
+            }));
+        }
+        return futures;
+    }
+
+    private PropertiesConfiguration waitForCompletionAndMergeProperties(final List<Future<PropertiesConfiguration>> futures) throws InterruptedException, ExecutionException {
+        PropertiesConfiguration targetProperties = null;
+        for (final Future<PropertiesConfiguration> future : futures) {
+            if (targetProperties == null) {
+                targetProperties = future.get();
+            } else {
+                putAll(targetProperties, future.get());
+            }
+        }
+        return targetProperties;
+    }
 }
