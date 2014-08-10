@@ -28,6 +28,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.FileUtils;
 
 import com.carmatech.maven.model.IMerger;
+import com.google.common.io.Files;
 
 public class MergeOperation {
 
@@ -49,8 +50,9 @@ public class MergeOperation {
 		merger.mergeTo(target, sources);
 	}
 
-	public File getTargetFile() {
+	public File getTargetFile() throws IOException {
 		checkNotNull(targetFile, "A valid target file path must be provided.");
+		Files.createParentDirs(targetFile);
 		return targetFile;
 	}
 
