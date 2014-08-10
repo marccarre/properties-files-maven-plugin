@@ -32,8 +32,7 @@ public class SimpleMerger implements IMerger {
 	private final Log logger;
 
 	public SimpleMerger(final Log logger) {
-		checkNotNull(logger, "Logger must NOT be null.");
-		this.logger = logger;
+		this.logger = checkNotNull(logger, "Logger must NOT be null.");
 	}
 
 	@Override
@@ -46,6 +45,7 @@ public class SimpleMerger implements IMerger {
 	private PropertiesConfiguration mergePropertiesFrom(final List<File> sourceFiles) throws IOException {
 		PropertiesConfiguration targetProperties = null;
 		for (final File sourceFile : sourceFiles) {
+			// Returned PropertiesConfiguration object, holding all values, is initialized with the first file to keep all comments.
 			if (targetProperties == null) {
 				targetProperties = toProperties(sourceFile);
 			} else {

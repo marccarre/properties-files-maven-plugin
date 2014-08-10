@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -32,6 +31,8 @@ import java.util.concurrent.Future;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.maven.plugin.logging.Log;
 
+import com.google.common.collect.Lists;
+
 public class ParallelMerger implements IMerger {
 
 	private final Log logger;
@@ -39,10 +40,8 @@ public class ParallelMerger implements IMerger {
 	private final ExecutorService threadPool;
 
 	public ParallelMerger(final Log logger, final ExecutorService threadPool) {
-		checkNotNull(logger, "Logger must NOT be null.");
-		checkNotNull(logger, "Thread pool must NOT be null.");
-		this.logger = logger;
-		this.threadPool = threadPool;
+		this.logger = checkNotNull(logger, "Logger must NOT be null.");
+		this.threadPool = checkNotNull(threadPool, "Thread pool must NOT be null.");
 	}
 
 	@Override
@@ -66,7 +65,7 @@ public class ParallelMerger implements IMerger {
 	}
 
 	private List<Future<PropertiesConfiguration>> parallelToProperties(final List<File> sourceFiles) {
-		final List<Future<PropertiesConfiguration>> futures = new LinkedList<Future<PropertiesConfiguration>>();
+		final List<Future<PropertiesConfiguration>> futures = Lists.newArrayListWithExpectedSize(sourceFiles.size());
 		for (final File sourceFile : sourceFiles) {
 			futures.add(threadPool.submit(new Callable<PropertiesConfiguration>() {
 				@Override
@@ -82,6 +81,7 @@ public class ParallelMerger implements IMerger {
 			ExecutionException {
 		PropertiesConfiguration targetProperties = null;
 		for (final Future<PropertiesConfiguration> future : futures) {
+			// Returned PropertiesConfiguration object, holding all values, is initialized with the first file to keep all comments.
 			if (targetProperties == null) {
 				targetProperties = future.get();
 			} else {

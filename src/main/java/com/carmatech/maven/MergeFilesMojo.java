@@ -39,7 +39,7 @@ public class MergeFilesMojo extends AbstractMojo {
 	private MergeOperation[] operations;
 
 	@Parameter(required = false)
-	private final boolean parallel = true;
+	private boolean parallel = true;
 
 	private Log logger;
 

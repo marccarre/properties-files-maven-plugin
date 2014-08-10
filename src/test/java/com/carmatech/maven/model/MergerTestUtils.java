@@ -16,14 +16,16 @@ package com.carmatech.maven.model;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.io.File;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hamcrest.Matcher;
+
+import com.google.common.collect.Lists;
 
 public final class MergerTestUtils {
 
@@ -33,19 +35,22 @@ public final class MergerTestUtils {
 
 	public static void assertThatPropertiesAreSameAsSources(final File targetFile) throws Exception {
 		final PropertiesConfiguration properties = new PropertiesConfiguration(targetFile);
-		assertThat(properties.getProperty("FamilyName"), equalToObject("Skywalker"));
-		assertThat(properties.getProperty("first_name"), equalToObject("Luke"));
-		assertThat(properties.getProperty("Sabrolaser"), equalToObject("bLuE"));
-		assertThat(properties.getProperty("planets"), equalToObject(asList("endor", "tatooine", "naboo", "coruscant", "alderaan", "kamino", "yavin")));
-		assertThat(properties.getProperty("children"), equalToObject(null));
+		assertThat(properties.getString("FamilyName"), is("Skywalker"));
+		assertThat(properties.getString("first_name"), is("Luke"));
+		assertThat(properties.getString("Sabrolaser"), is("bLuE"));
+		assertThat(properties.getProperty("planets"), isObject(asList("endor", "tatooine", "naboo", "coruscant", "alderaan", "kamino", "yavin")));
+		assertThat(properties.getProperty("children"), is(nullValue()));
 	}
 
-	private static Matcher<Object> equalToObject(Object value) {
-		return equalTo(value);
+	/**
+	 * Trick to have the matcher comparing objects, instead of trying to compare more specific types.
+	 */
+	private static Matcher<Object> isObject(final Object value) {
+		return is(value);
 	}
 
 	public static List<File> getSourceFiles(final String... filePaths) {
-		final List<File> sourceFiles = new LinkedList<File>();
+		final List<File> sourceFiles = Lists.newArrayListWithExpectedSize(filePaths.length);
 		for (final String filePath : filePaths) {
 			sourceFiles.add(new File(filePath));
 		}

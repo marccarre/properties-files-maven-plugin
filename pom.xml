@@ -28,8 +28,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<javaVersion>1.6</javaVersion>
-		<guavaVersion>14.0.1</guavaVersion>
-		<apacheCommonsVersion>3.1</apacheCommonsVersion>
 		<mavenVersion>2.2.1</mavenVersion>
 		<mavenPluginVersion>3.1</mavenPluginVersion>
 		<pluginTestingVersion>1.2</pluginTestingVersion>
@@ -40,12 +38,12 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>${guavaVersion}</version>
+			<version>17.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>${apacheCommonsVersion}</version>
+			<version>3.3.2</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-configuration</groupId>
@@ -110,13 +108,13 @@
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
-			<version>1.1</version>
+			<version>1.3</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.10</version>
+			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

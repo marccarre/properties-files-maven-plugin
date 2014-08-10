@@ -44,11 +44,11 @@ public final class MergeUtils {
 		}
 	}
 
-	public static void putAll(PropertiesConfiguration target, PropertiesConfiguration source) {
-		for (Iterator<String> it = source.getKeys(); it.hasNext();) {
-			String key = it.next();
-			Object property = source.getProperty(key);
-			target.setProperty(key, property);
+	public static void putAll(final PropertiesConfiguration target, final PropertiesConfiguration source) {
+		for (final Iterator<String> sourceKeys = source.getKeys(); sourceKeys.hasNext();) {
+			final String key = sourceKeys.next();
+			final Object value = source.getProperty(key);
+			target.setProperty(key, value);
 		}
 	}
 
