@@ -14,46 +14,45 @@
  ******************************************************************************/
 package com.carmatech.maven.utils;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Properties;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 
 public final class MergeUtils {
 
-    private MergeUtils() {
-        // Pure utility class, do NOT instantiate.
-    }
+	private MergeUtils() {
+		// Pure utility class, do NOT instantiate.
+	}
 
-    public static PropertiesConfiguration toProperties(final File propertiesFile) throws IOException {
-        try {
-            return new PropertiesConfiguration(propertiesFile);
-        } catch (ConfigurationException e) {
-            throw new IOException("Unable to load properties file " + propertiesFile, e);
-        }
-    }
+	public static PropertiesConfiguration toProperties(final File propertiesFile) throws IOException {
+		try {
+			return new PropertiesConfiguration(propertiesFile);
+		} catch (ConfigurationException e) {
+			throw new IOException("Unable to load properties file " + propertiesFile, e);
+		}
+	}
 
-    public static void savePropertiesTo(final File targetFile, final PropertiesConfiguration properties, final String comment) throws IOException {
-        properties.setHeader(comment);
-        try {
-            properties.save(targetFile);
-        } catch (ConfigurationException e) {
-            throw new IOException("Unable to save properties file " + targetFile);
-        }
-    }
+	public static void savePropertiesTo(final File targetFile, final PropertiesConfiguration properties, final String comment) throws IOException {
+		properties.setHeader(comment);
+		try {
+			properties.save(targetFile);
+		} catch (ConfigurationException e) {
+			throw new IOException("Unable to save properties file " + targetFile);
+		}
+	}
 
-    public static void putAll(PropertiesConfiguration target, PropertiesConfiguration source) {
-        for (Iterator<String> it = source.getKeys(); it.hasNext();) {
-            String key = it.next();
-            Object property = source.getProperty(key);
-            target.setProperty(key, property);
-        }
-    }
+	public static void putAll(PropertiesConfiguration target, PropertiesConfiguration source) {
+		for (Iterator<String> it = source.getKeys(); it.hasNext();) {
+			String key = it.next();
+			Object property = source.getProperty(key);
+			target.setProperty(key, property);
+		}
+	}
 
-    public static <T> String generateComment(final Class<T> clazz) {
-        return "File merged by properties-files-maven-plugin, using " + clazz.getSimpleName() + ", at:";
-    }
+	public static <T> String generateComment(final Class<T> clazz) {
+		return "File merged by properties-files-maven-plugin, using " + clazz.getSimpleName() + ", at:";
+	}
 }

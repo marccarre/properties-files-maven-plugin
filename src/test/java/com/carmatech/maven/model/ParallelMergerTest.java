@@ -20,17 +20,15 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import com.google.common.io.Files;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
 
 import com.carmatech.maven.utils.ThreadingUtils;
+import com.google.common.io.Files;
 
 public class ParallelMergerTest {
 	@Test
@@ -44,19 +42,16 @@ public class ParallelMergerTest {
 		assertThatPropertiesAreSameAsSources(targetFile);
 	}
 
-    @Test
-    public void targetPropertiesFileRetainsItsNiceFormatting() throws Exception {
-        File targetFile = new File("target/test-classes/unit/simple_merger.properties");
-        List<File> sourceFiles = getSourceFiles(
-                "src/test/resources/unit/nicely_formatted.properties",
-                "src/test/resources/unit/all_formats.properties"
-        );
+	@Test
+	public void targetPropertiesFileRetainsItsNiceFormatting() throws Exception {
+		File targetFile = new File("target/test-classes/unit/simple_merger.properties");
+		List<File> sourceFiles = getSourceFiles("src/test/resources/unit/nicely_formatted.properties", "src/test/resources/unit/all_formats.properties");
 
-        Log logger = new SystemStreamLog();
-        new ParallelMerger(logger, ThreadingUtils.createThreadPool(logger, sourceFiles.size())).mergeTo(targetFile, sourceFiles);
+		Log logger = new SystemStreamLog();
+		new ParallelMerger(logger, ThreadingUtils.createThreadPool(logger, sourceFiles.size())).mergeTo(targetFile, sourceFiles);
 
-        String expectedProperties = Files.toString(new File("src/test/resources/unit/nicely_formatted_merged.properties"), Charset.forName("UTF-8"));
-        expectedProperties = expectedProperties.replace("${merger}", ParallelMerger.class.getSimpleName());
-        assertThat(Files.toString(targetFile, Charset.defaultCharset()), equalTo(expectedProperties));
-    }
+		String expectedProperties = Files.toString(new File("src/test/resources/unit/nicely_formatted_merged.properties"), Charset.forName("UTF-8"));
+		expectedProperties = expectedProperties.replace("${merger}", ParallelMerger.class.getSimpleName());
+		assertThat(Files.toString(targetFile, Charset.defaultCharset()), equalTo(expectedProperties));
+	}
 }

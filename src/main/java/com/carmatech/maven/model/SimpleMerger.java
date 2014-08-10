@@ -14,41 +14,44 @@
  ******************************************************************************/
 package com.carmatech.maven.model;
 
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.maven.plugin.logging.Log;
+import static com.carmatech.maven.utils.MergeUtils.generateComment;
+import static com.carmatech.maven.utils.MergeUtils.putAll;
+import static com.carmatech.maven.utils.MergeUtils.savePropertiesTo;
+import static com.carmatech.maven.utils.MergeUtils.toProperties;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static com.carmatech.maven.utils.MergeUtils.*;
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.maven.plugin.logging.Log;
 
 public class SimpleMerger implements IMerger {
 
-    private final Log logger;
+	private final Log logger;
 
-    public SimpleMerger(final Log logger) {
-        checkNotNull(logger, "Logger must NOT be null.");
-        this.logger = logger;
-    }
+	public SimpleMerger(final Log logger) {
+		checkNotNull(logger, "Logger must NOT be null.");
+		this.logger = logger;
+	}
 
-    @Override
-    public void mergeTo(final File targetFile, final List<File> sourceFiles) throws IOException {
-        logger.info("Merging [" + targetFile.getName() + "] using " + SimpleMerger.class.getSimpleName() + "...");
-        final PropertiesConfiguration allProperties = mergePropertiesFrom(sourceFiles);
-        savePropertiesTo(targetFile, allProperties, generateComment(SimpleMerger.class));
-    }
+	@Override
+	public void mergeTo(final File targetFile, final List<File> sourceFiles) throws IOException {
+		logger.info("Merging [" + targetFile.getName() + "] using " + SimpleMerger.class.getSimpleName() + "...");
+		final PropertiesConfiguration allProperties = mergePropertiesFrom(sourceFiles);
+		savePropertiesTo(targetFile, allProperties, generateComment(SimpleMerger.class));
+	}
 
-    private PropertiesConfiguration mergePropertiesFrom(final List<File> sourceFiles) throws IOException {
-        PropertiesConfiguration targetProperties = null;
-        for (final File sourceFile : sourceFiles) {
-            if (targetProperties == null) {
-                targetProperties = toProperties(sourceFile);
-            } else {
-                putAll(targetProperties, toProperties(sourceFile));
-            }
-        }
-        return targetProperties;
-    }
+	private PropertiesConfiguration mergePropertiesFrom(final List<File> sourceFiles) throws IOException {
+		PropertiesConfiguration targetProperties = null;
+		for (final File sourceFile : sourceFiles) {
+			if (targetProperties == null) {
+				targetProperties = toProperties(sourceFile);
+			} else {
+				putAll(targetProperties, toProperties(sourceFile));
+			}
+		}
+		return targetProperties;
+	}
 }
