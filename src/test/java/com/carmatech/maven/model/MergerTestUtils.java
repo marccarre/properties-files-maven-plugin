@@ -14,23 +14,34 @@
  ******************************************************************************/
 package com.carmatech.maven.model;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hamcrest.Matcher;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 
 public final class MergerTestUtils {
 
 	private MergerTestUtils() {
 		// Pure utility class, do NOT instantiate.
+	}
+
+	public static String readProperties(final File targetFile) throws IOException {
+		return Files.toString(targetFile, UTF_8);
+	}
+
+	public static <T> String readExpectedProperties(final String name, final Class<T> clazz) throws IOException {
+		return Files.toString(new File(name), UTF_8).replace("${merger}", clazz.getSimpleName());
 	}
 
 	public static void assertThatPropertiesAreSameAsSources(final File targetFile) throws Exception {
