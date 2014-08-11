@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/marccarre/properties-files-maven-plugin.png?branch=master)](https://travis-ci.org/marccarre/properties-files-maven-plugin) [![Coverage Status](https://coveralls.io/repos/marccarre/properties-files-maven-plugin/badge.png)](https://coveralls.io/r/marccarre/properties-files-maven-plugin)
+
 A Maven plugin to manipulate properties files in an easy way.
 
 Features:
