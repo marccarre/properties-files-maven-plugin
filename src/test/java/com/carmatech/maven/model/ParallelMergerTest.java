@@ -46,7 +46,7 @@ public class ParallelMergerTest {
 
 	@Test
 	public void targetPropertiesFileRetainsItsNiceFormatting() throws Exception {
-		File targetFile = new File("target/test-classes/unit/simple_merger_2_" + UUID.randomUUID().toString() + "_.properties");
+		File targetFile = new File("target/test-classes/unit/parallel_merger_2_" + UUID.randomUUID().toString() + "_.properties");
 		List<File> sourceFiles = getSourceFiles("src/test/resources/unit/nicely_formatted.properties", "src/test/resources/unit/all_formats.properties");
 
 		new ParallelMerger(logger, ThreadingUtils.createThreadPool(logger, sourceFiles.size())).mergeTo(targetFile, sourceFiles);

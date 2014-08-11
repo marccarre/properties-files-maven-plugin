@@ -150,17 +150,24 @@
 
 			<!-- Code Coverage -->
 			<plugin>
-			    <groupId>org.jacoco</groupId>
-			    <artifactId>jacoco-maven-plugin</artifactId>
-			    <version>0.7.1.201405082137</version>
-			    <executions>
-			        <execution>
-			            <id>prepare-agent</id>
-			            <goals>
-			                <goal>prepare-agent</goal>
-			            </goals>
-			        </execution>
-			    </executions>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.1.201405082137</version>
+				<executions>
+					<execution>
+						<id>pre-unit-test</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>post-unit-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 			<!-- Publication of Code Coverage metrics via Travis-CI and Coveralls -->
