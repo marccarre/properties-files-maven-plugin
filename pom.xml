@@ -155,7 +155,7 @@
 				<version>0.7.1.201405082137</version>
 				<configuration>
 					<excludes>
-						<exclude>com/carmatech/HelpMojo.class</exclude>
+						<exclude>com/carmatech/maven/HelpMojo.class</exclude>
 					</excludes>
 				</configuration>
 				<executions>
