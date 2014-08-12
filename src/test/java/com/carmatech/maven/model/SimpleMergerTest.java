@@ -34,7 +34,7 @@ public class SimpleMergerTest {
 
 	@Test
 	public void mergePropertiesInConsistentWay() throws Exception {
-		File targetFile = new File("target/test-classes/unit/simple_merger_1_" + UUID.randomUUID().toString() + "_.properties");
+		File targetFile = new File("target/test-classes/unit/simple_merger_1_" + UUID.randomUUID().toString() + ".properties");
 		List<File> sourceFiles = getSourceFiles("src/test/resources/unit/all_formats.properties");
 
 		new SimpleMerger(logger).mergeTo(targetFile, sourceFiles);
@@ -44,7 +44,7 @@ public class SimpleMergerTest {
 
 	@Test
 	public void targetPropertiesFileRetainsItsNiceFormatting() throws Exception {
-		File targetFile = new File("target/test-classes/unit/simple_merger_2_" + UUID.randomUUID().toString() + "_.properties");
+		File targetFile = new File("target/test-classes/unit/simple_merger_2_" + UUID.randomUUID().toString() + ".properties");
 		List<File> sourceFiles = getSourceFiles("src/test/resources/unit/nicely_formatted.properties", "src/test/resources/unit/all_formats.properties");
 
 		new SimpleMerger(logger).mergeTo(targetFile, sourceFiles);
