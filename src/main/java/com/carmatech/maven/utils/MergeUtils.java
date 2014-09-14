@@ -21,6 +21,8 @@ import java.util.Iterator;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
+import com.google.common.io.Files;
+
 public final class MergeUtils {
 
 	private MergeUtils() {
@@ -38,6 +40,7 @@ public final class MergeUtils {
 	public static void savePropertiesTo(final File targetFile, final PropertiesConfiguration properties, final String comment) throws IOException {
 		properties.setHeader(comment);
 		try {
+			Files.createParentDirs(targetFile);
 			properties.save(targetFile);
 		} catch (ConfigurationException e) {
 			throw new IOException("Unable to save properties file " + targetFile);
