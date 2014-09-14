@@ -19,53 +19,69 @@ import static org.hamcrest.Matchers.is;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 public class MergeFilesMojoTest extends AbstractMojoTestCase {
 	public void testMergeTwoPropertiesFilesWithNoIntersection() throws Exception {
-		File pom = new File(getBasedir(), "/target/test-classes/poms/testing_pom_01.xml");
-		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", pom);
+		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", localFile("target/test-classes/poms/testing_pom_01.xml"));
 		assertNotNull(mojo);
 
 		mojo.execute();
-		File mergedPropertiesFile = new File(getBasedir(), "/target/test-classes/poms/target_01.properties");
-		Properties properties = new Properties();
-		properties.load(new FileInputStream(mergedPropertiesFile));
 
-		assertThat(properties.get("key0").toString(), is("value0")); // from a.properties
-		assertThat(properties.get("key1").toString(), is("value1")); // from a.properties
-		assertThat(properties.get("key2").toString(), is("value2")); // from b.properties
+		Properties actualProperties = loadPropertiesFrom("target/test-classes/poms/target_01.properties");
+		assertThat(actualProperties.get("key0").toString(), is("value0")); // from a.properties
+		assertThat(actualProperties.get("key1").toString(), is("value1")); // from a.properties
+		assertThat(actualProperties.get("key2").toString(), is("value2")); // from b.properties
 	}
 
 	public void testMergeFourPropertiesFilesWithIntersection() throws Exception {
-		File pom = new File(getBasedir(), "/target/test-classes/poms/testing_pom_02.xml");
-		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", pom);
+		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", localFile("target/test-classes/poms/testing_pom_02.xml"));
 		assertNotNull(mojo);
 
 		mojo.execute();
-		File mergedPropertiesFile = new File(getBasedir(), "/target/test-classes/poms/target_02.properties");
-		Properties properties = new Properties();
-		properties.load(new FileInputStream(mergedPropertiesFile));
 
-		assertThat(properties.get("key0").toString(), is("value0")); // from a.properties
-		assertThat(properties.get("key1").toString(), is("valueForEnv")); // from a.properties
-		assertThat(properties.get("key2").toString(), is("valueForRegion")); // from b.properties
+		Properties actualProperties = loadPropertiesFrom("target/test-classes/poms/target_02.properties");
+		assertThat(actualProperties.get("key0").toString(), is("value0")); // from a.properties
+		assertThat(actualProperties.get("key1").toString(), is("valueForEnv")); // from a.properties
+		assertThat(actualProperties.get("key2").toString(), is("valueForRegion")); // from b.properties
 	}
 
 	public void testMergeFourPropertiesFilesWithIntersectionUsingSimpleMerger() throws Exception {
-		File pom = new File(getBasedir(), "/target/test-classes/poms/testing_pom_03.xml");
-		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", pom);
+		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", localFile("target/test-classes/poms/testing_pom_03.xml"));
 		assertNotNull(mojo);
 
 		mojo.execute();
-		File mergedPropertiesFile = new File(getBasedir(), "/target/test-classes/poms/target_03.properties");
-		Properties properties = new Properties();
-		properties.load(new FileInputStream(mergedPropertiesFile));
 
-		assertThat(properties.get("key0").toString(), is("value0")); // from a.properties
-		assertThat(properties.get("key1").toString(), is("valueForEnv")); // from a.properties
-		assertThat(properties.get("key2").toString(), is("valueForRegion")); // from b.properties
+		Properties actualProperties = loadPropertiesFrom("target/test-classes/poms/target_03.properties");
+		assertThat(actualProperties.get("key0").toString(), is("value0")); // from a.properties
+		assertThat(actualProperties.get("key1").toString(), is("valueForEnv")); // from a.properties
+		assertThat(actualProperties.get("key2").toString(), is("valueForRegion")); // from b.properties
+	}
+
+	public void testMergePropertiesFilesToFileWithMissingParentFolder() throws Exception {
+		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", localFile("src/test/resources/poms/testing_pom_non_existing_target_folder.xml"));
+		assertNotNull(mojo);
+
+		mojo.execute();
+
+		Properties actualProperties = loadPropertiesFrom("target/test-classes/poms/non_existing_target_folder/target.properties");
+		assertThat(actualProperties.get("key0").toString(), is("value0")); // from a.properties
+		assertThat(actualProperties.get("key1").toString(), is("value1")); // from a.properties
+		assertThat(actualProperties.get("key2").toString(), is("value2")); // from b.properties
+	}
+
+	private File localFile(final String path) {
+		return new File(getBasedir(), path);
+	}
+
+	private Properties loadPropertiesFrom(final String path) throws IOException, FileNotFoundException {
+		final File propertiesFile = localFile(path);
+		final Properties properties = new Properties();
+		properties.load(new FileInputStream(propertiesFile));
+		return properties;
 	}
 }
