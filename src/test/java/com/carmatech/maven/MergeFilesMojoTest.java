@@ -27,7 +27,7 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 public class MergeFilesMojoTest extends AbstractMojoTestCase {
 	public void testMergeTwoPropertiesFilesWithNoIntersection() throws Exception {
-		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", localFile("target/test-classes/poms/testing_pom_01.xml"));
+		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", localFile("src/test/resources/poms/testing_pom_01.xml"));
 		assertNotNull(mojo);
 
 		mojo.execute();
@@ -39,7 +39,7 @@ public class MergeFilesMojoTest extends AbstractMojoTestCase {
 	}
 
 	public void testMergeFourPropertiesFilesWithIntersection() throws Exception {
-		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", localFile("target/test-classes/poms/testing_pom_02.xml"));
+		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", localFile("src/test/resources/poms/testing_pom_02.xml"));
 		assertNotNull(mojo);
 
 		mojo.execute();
@@ -51,7 +51,7 @@ public class MergeFilesMojoTest extends AbstractMojoTestCase {
 	}
 
 	public void testMergeFourPropertiesFilesWithIntersectionUsingSimpleMerger() throws Exception {
-		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", localFile("target/test-classes/poms/testing_pom_03.xml"));
+		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", localFile("src/test/resources/poms/testing_pom_03.xml"));
 		assertNotNull(mojo);
 
 		mojo.execute();
