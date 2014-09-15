@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -114,7 +113,7 @@ public class MergeOperation {
 	}
 
 	private List<File> findAllFiles(final FileSet[] fileSets) throws IOException {
-		final List<File> files = new LinkedList<File>();
+		final List<File> files = Lists.newArrayList();
 		for (final FileSet fileSet : fileSets) {
 			files.addAll(toFiles(fileSet));
 		}
