@@ -8,6 +8,16 @@ Features:
   - Resources filtering (using System, Maven and merged properties).
   - On missing input file, either skip and log warning or throw error.
 
+Latest version (from either [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Ccom.carmatechnologies.maven) or [OSS Sonatype](https://oss.sonatype.org/#nexus-search;quick~com.carmatechnologies.maven)):
+
+    
+    <dependency>
+      <groupId>com.carmatechnologies.maven</groupId>
+      <artifactId>properties-files-maven-plugin</artifactId>
+      <version>0.2</version>
+    </dependency>
+
+
 *******************************************************************************
 **Example #1** - Merge using default merger (parallel merger):
 
