@@ -15,7 +15,7 @@ Features:
     <build>
         <plugins>
             <plugin>
-                <groupId>com.carmatech.maven</groupId>
+                <groupId>com.carmatechnologies.maven</groupId>
                 <artifactId>properties-files-maven-plugin</artifactId>
                 <executions>
                     <execution>
@@ -57,7 +57,7 @@ Features:
     <build>
         <plugins>
             <plugin>
-                <groupId>com.carmatech.maven</groupId>
+                <groupId>com.carmatechnologies.maven</groupId>
                 <artifactId>properties-files-maven-plugin</artifactId>
                 <executions>
                     <execution>
@@ -100,7 +100,7 @@ Features:
     <build>
         <plugins>
             <plugin>
-                <groupId>com.carmatech.maven</groupId>
+                <groupId>com.carmatechnologies.maven</groupId>
                 <artifactId>properties-files-maven-plugin</artifactId>
                 <executions>
                     <execution>
@@ -128,7 +128,7 @@ Features:
     <build>
         <plugins>
             <plugin>
-                <groupId>com.carmatech.maven</groupId>
+                <groupId>com.carmatechnologies.maven</groupId>
                 <artifactId>properties-files-maven-plugin</artifactId>
                 <executions>
                     <execution>
