@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -36,6 +37,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 import com.carmatech.maven.model.IMerger;
+import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
 public class MergeOperation {
@@ -45,6 +47,9 @@ public class MergeOperation {
 
 	@Parameter(required = false)
 	protected boolean filtering = false;
+
+	@Parameter(required = false)
+	protected boolean errorOnMissingFile = false;
 
 	@Parameter(required = true)
 	protected File targetFile;
@@ -120,7 +125,24 @@ public class MergeOperation {
 		final File directory = new File(fileSet.getDirectory());
 		final String includes = StringUtils.join(fileSet.getIncludes(), COMMA);
 		final String excludes = StringUtils.join(fileSet.getExcludes(), COMMA);
-		return FileUtils.getFiles(directory, includes, excludes);
+		final List<File> files = FileUtils.getFiles(directory, includes, excludes);
+		return removeNonExisting(files);
+	}
+
+	private List<File> removeNonExisting(final List<File> files) throws FileNotFoundException {
+		final List<File> existingFiles = Lists.newArrayListWithExpectedSize(files.size());
+		for (final File file : files) {
+			if (file.exists()) {
+				existingFiles.add(file);
+			} else {
+				if (errorOnMissingFile) {
+					throw new FileNotFoundException(file.getAbsolutePath());
+				} else {
+					logger.warn("Skipped file as it could not be found on disk: [" + file.getAbsolutePath() + "].");
+				}
+			}
+		}
+		return existingFiles;
 	}
 
 	private void filter(final PropertiesConfiguration properties) {

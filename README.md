@@ -6,6 +6,7 @@ Features:
   - Merge multiple properties files into a single one.
   - Merge multiple properties files into a single one, in parallel.
   - Resources filtering (using System, Maven and merged properties).
+  - On missing input file, either skip and log warning or throw error.
 
 *******************************************************************************
 **Example #1** - Merge using default merger (parallel merger):
@@ -120,4 +121,31 @@ Features:
         </plugins>
     </build>
 
+
+**Example #4** - Fail on missing input properties file:
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.carmatech.maven</groupId>
+                <artifactId>properties-files-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <operations>
+                        <operation>
+                            <errorOnMissingFile>true</errorOnMissingFile>
+                            [...]
+                        </operation>
+                    </operations>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 

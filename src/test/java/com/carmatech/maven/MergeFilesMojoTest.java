@@ -15,6 +15,7 @@
 package com.carmatech.maven;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 import java.io.File;
@@ -23,9 +24,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 
 public class MergeFilesMojoTest extends AbstractMojoTestCase {
+
+	@Rule
+	public ExpectedException exception = ExpectedException.none();
+
 	public void testMergeTwoPropertiesFilesWithNoIntersection() throws Exception {
 		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", getTestFile("src/test/resources/poms/testing_pom_01.xml"));
 		assertNotNull(mojo);
@@ -82,13 +90,34 @@ public class MergeFilesMojoTest extends AbstractMojoTestCase {
 //
 //		mojo.execute();
 //
-//		Properties actualProperties = loadPropertiesFrom("target/test-classes/poms/non_existing_target_folder/target.properties");
+//		Properties actualProperties = loadPropertiesFrom("target/test-classes/poms/target_resource_filtering.properties");
 //		assertThat(actualProperties.getProperty("key0"), is("value0")); // from a.properties
 //		assertThat(actualProperties.getProperty("key1"), is("value1")); // from a.properties
 //		assertThat(actualProperties.getProperty("key2"), is("value2")); // from b.properties
 //		// from to_filter.properties
 //		assertThat(actualProperties.getProperty("injected_by_resource_filtering"), is("Successfully injected from static Maven Property!"));
 //	}
+
+	public void testMergePropertiesFilesToFileWithMissingInputFile() throws Exception {
+		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", getTestFile("src/test/resources/poms/testing_pom_non_existing_input_file.xml"));
+		assertNotNull(mojo);
+
+		mojo.execute();
+
+		Properties actualProperties = loadPropertiesFrom("target/test-classes/poms/target_non_existing_input_file.properties");
+		assertThat(actualProperties.getProperty("key0"), is("value0")); // from a.properties
+		assertThat(actualProperties.getProperty("key1"), is("value1")); // from a.properties
+		assertThat(actualProperties.getProperty("key2"), is("value2")); // from b.properties
+	}
+
+	public void testMergePropertiesFilesToFileWithMissingInputFileAndErrorOnMissingFile() throws Exception {
+		exception.expect(MojoExecutionException.class);
+		exception.expectMessage(containsString("non_existing.properties"));
+
+		MergeFilesMojo mojo = (MergeFilesMojo) lookupMojo("merge", getTestFile("src/test/resources/poms/testing_pom_non_existing_input_file_failure.xml"));
+		assertNotNull(mojo);
+		mojo.execute();
+	}
 
 	private Properties loadPropertiesFrom(final String path) throws IOException, FileNotFoundException {
 		final File propertiesFile = getTestFile(path);
