@@ -19,6 +19,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
+
 public interface IMerger {
-	void mergeTo(final File targetFile, final List<File> sourceFiles) throws IOException, FileNotFoundException;
+	PropertiesConfiguration merge(final List<File> sourceFiles) throws IOException, FileNotFoundException;
 }

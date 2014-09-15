@@ -23,6 +23,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 import com.carmatech.maven.model.IMerger;
 import com.carmatech.maven.model.MergerFactory;
@@ -35,42 +36,57 @@ import com.carmatech.maven.model.MergerFactory;
 @Mojo(name = "merge", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true, requiresProject = true)
 public class MergeFilesMojo extends AbstractMojo {
 
+	@Parameter(defaultValue = "${project}", required = true, readonly = true)
+	protected MavenProject project;
+
 	@Parameter(required = true)
-	private MergeOperation[] operations;
+	protected MergeOperation[] operations;
 
 	@Parameter(required = false)
-	private boolean parallel = true;
+	protected boolean parallel = true;
 
-	private Log logger;
+	protected Log logger;
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		logger = getLog();
 		validateOperations();
+		initializeOperations();
 
 		try {
-			final int numTotalSourceFiles = countSourceFiles(operations);
-
-			for (final MergeOperation operation : operations) {
-				final IMerger merger = MergerFactory.getMerger(logger, numTotalSourceFiles, parallel);
-				operation.merge(merger);
-			}
+			mergeFiles();
 		} catch (Exception e) {
 			throw new MojoExecutionException(e.getMessage(), e);
 		}
-	}
-
-	private int countSourceFiles(final MergeOperation[] operations) throws IOException {
-		int count = 0;
-		for (final MergeOperation operation : operations) {
-			count += operation.getSourceFiles().size();
-		}
-		return count;
 	}
 
 	private void validateOperations() throws MojoExecutionException {
 		if ((operations == null) || (operations.length == 0)) {
 			throw new MojoExecutionException("An operation should be defined for maven-properties-files-plugin to work.");
 		}
+	}
+
+	private void initializeOperations() {
+		for (final MergeOperation operation : operations) {
+			operation.setProject(project);
+			operation.setLogger(logger);
+		}
+	}
+
+	private void mergeFiles() throws IOException {
+		final int numTotalSourceFiles = countTotalSourceFiles(operations);
+
+		for (final MergeOperation operation : operations) {
+			final IMerger merger = MergerFactory.getMerger(logger, numTotalSourceFiles, parallel);
+			operation.merge(merger);
+		}
+	}
+
+	private int countTotalSourceFiles(final MergeOperation[] operations) throws IOException {
+		int count = 0;
+		for (final MergeOperation operation : operations) {
+			count += operation.getSourceFiles().size();
+		}
+		return count;
 	}
 }

@@ -14,9 +14,7 @@
  ******************************************************************************/
 package com.carmatech.maven.model;
 
-import static com.carmatech.maven.utils.MergeUtils.generateComment;
 import static com.carmatech.maven.utils.MergeUtils.putAll;
-import static com.carmatech.maven.utils.MergeUtils.savePropertiesTo;
 import static com.carmatech.maven.utils.MergeUtils.toProperties;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -45,17 +43,15 @@ public class ParallelMerger implements IMerger {
 	}
 
 	@Override
-	public void mergeTo(final File targetFile, final List<File> sourceFiles) throws IOException {
+	public PropertiesConfiguration merge(final List<File> sourceFiles) throws IOException {
 		try {
-			logger.info("Merging [" + targetFile.getName() + "] using " + ParallelMerger.class.getSimpleName() + "...");
-			final PropertiesConfiguration allProperties = mergePropertiesFrom(sourceFiles);
-			savePropertiesTo(targetFile, allProperties, generateComment(ParallelMerger.class));
+			return mergePropertiesFrom(sourceFiles);
 		} catch (InterruptedException e) {
 			logger.warn("Parallel merger was interrupted: " + e.getMessage() + ". Falling back to simple merger...", e);
-			new SimpleMerger(logger).mergeTo(targetFile, sourceFiles);
+			return new SimpleMerger().merge(sourceFiles);
 		} catch (ExecutionException e) {
 			logger.warn("Parallel merger failed to complete: " + e.getMessage() + ". Falling back to simple merger...", e);
-			new SimpleMerger(logger).mergeTo(targetFile, sourceFiles);
+			return new SimpleMerger().merge(sourceFiles);
 		}
 	}
 

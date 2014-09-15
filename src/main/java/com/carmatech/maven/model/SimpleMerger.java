@@ -14,35 +14,18 @@
  ******************************************************************************/
 package com.carmatech.maven.model;
 
-import static com.carmatech.maven.utils.MergeUtils.generateComment;
 import static com.carmatech.maven.utils.MergeUtils.putAll;
-import static com.carmatech.maven.utils.MergeUtils.savePropertiesTo;
 import static com.carmatech.maven.utils.MergeUtils.toProperties;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.maven.plugin.logging.Log;
 
 public class SimpleMerger implements IMerger {
-
-	private final Log logger;
-
-	public SimpleMerger(final Log logger) {
-		this.logger = checkNotNull(logger, "Logger must NOT be null.");
-	}
-
 	@Override
-	public void mergeTo(final File targetFile, final List<File> sourceFiles) throws IOException {
-		logger.info("Merging [" + targetFile.getName() + "] using " + SimpleMerger.class.getSimpleName() + "...");
-		final PropertiesConfiguration allProperties = mergePropertiesFrom(sourceFiles);
-		savePropertiesTo(targetFile, allProperties, generateComment(SimpleMerger.class));
-	}
-
-	private PropertiesConfiguration mergePropertiesFrom(final List<File> sourceFiles) throws IOException {
+	public PropertiesConfiguration merge(final List<File> sourceFiles) throws IOException {
 		PropertiesConfiguration targetProperties = null;
 		for (final File sourceFile : sourceFiles) {
 			// Returned PropertiesConfiguration object, holding all values, is initialized with the first file to keep all comments.

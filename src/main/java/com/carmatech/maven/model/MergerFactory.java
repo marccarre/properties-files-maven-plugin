@@ -30,7 +30,7 @@ public class MergerFactory {
 
 	private static IMerger getSimpleMerger(final Log logger) {
 		logger.info("Creating " + SimpleMerger.class.getSimpleName() + "...");
-		return new SimpleMerger(logger);
+		return new SimpleMerger();
 	}
 
 	private static IMerger getParallelMerger(final Log logger, final int numTotalSourceFiles) {

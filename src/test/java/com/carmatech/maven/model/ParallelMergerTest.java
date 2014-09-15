@@ -18,6 +18,8 @@ import static com.carmatech.maven.model.MergerTestUtils.assertThatPropertiesAreS
 import static com.carmatech.maven.model.MergerTestUtils.getSourceFiles;
 import static com.carmatech.maven.model.MergerTestUtils.readExpectedProperties;
 import static com.carmatech.maven.model.MergerTestUtils.readProperties;
+import static com.carmatech.maven.utils.MergeUtils.generateComment;
+import static com.carmatech.maven.utils.MergeUtils.savePropertiesTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -25,6 +27,7 @@ import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
@@ -39,7 +42,9 @@ public class ParallelMergerTest {
 		File targetFile = new File("target/test-classes/unit/parallel_merger_1_" + UUID.randomUUID().toString() + ".properties");
 		List<File> sourceFiles = getSourceFiles("src/test/resources/unit/all_formats.properties");
 
-		new ParallelMerger(logger, ThreadingUtils.createThreadPool(logger, sourceFiles.size())).mergeTo(targetFile, sourceFiles);
+		IMerger merger = new ParallelMerger(logger, ThreadingUtils.createThreadPool(logger, sourceFiles.size()));
+		PropertiesConfiguration actualProperties = merger.merge(sourceFiles);
+		savePropertiesTo(targetFile, actualProperties, generateComment(merger.getClass()));
 
 		assertThatPropertiesAreSameAsSources(targetFile);
 	}
@@ -49,9 +54,11 @@ public class ParallelMergerTest {
 		File targetFile = new File("target/test-classes/unit/parallel_merger_2_" + UUID.randomUUID().toString() + ".properties");
 		List<File> sourceFiles = getSourceFiles("src/test/resources/unit/nicely_formatted.properties", "src/test/resources/unit/all_formats.properties");
 
-		new ParallelMerger(logger, ThreadingUtils.createThreadPool(logger, sourceFiles.size())).mergeTo(targetFile, sourceFiles);
+		ParallelMerger merger = new ParallelMerger(logger, ThreadingUtils.createThreadPool(logger, sourceFiles.size()));
+		PropertiesConfiguration actualProperties = merger.merge(sourceFiles);
+		savePropertiesTo(targetFile, actualProperties, generateComment(merger.getClass()));
 
-		String expectedProperties = readExpectedProperties("src/test/resources/unit/nicely_formatted_merged.properties", ParallelMerger.class);
+		String expectedProperties = readExpectedProperties("src/test/resources/unit/nicely_formatted_merged.properties", merger.getClass());
 		assertThat(readProperties(targetFile), is(expectedProperties));
 	}
 }

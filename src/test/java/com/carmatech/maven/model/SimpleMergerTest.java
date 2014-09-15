@@ -18,6 +18,8 @@ import static com.carmatech.maven.model.MergerTestUtils.assertThatPropertiesAreS
 import static com.carmatech.maven.model.MergerTestUtils.getSourceFiles;
 import static com.carmatech.maven.model.MergerTestUtils.readExpectedProperties;
 import static com.carmatech.maven.model.MergerTestUtils.readProperties;
+import static com.carmatech.maven.utils.MergeUtils.generateComment;
+import static com.carmatech.maven.utils.MergeUtils.savePropertiesTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -25,6 +27,7 @@ import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
@@ -37,7 +40,9 @@ public class SimpleMergerTest {
 		File targetFile = new File("target/test-classes/unit/simple_merger_1_" + UUID.randomUUID().toString() + ".properties");
 		List<File> sourceFiles = getSourceFiles("src/test/resources/unit/all_formats.properties");
 
-		new SimpleMerger(logger).mergeTo(targetFile, sourceFiles);
+		SimpleMerger merger = new SimpleMerger();
+		PropertiesConfiguration actualProperties = merger.merge(sourceFiles);
+		savePropertiesTo(targetFile, actualProperties, generateComment(merger.getClass()));
 
 		assertThatPropertiesAreSameAsSources(targetFile);
 	}
@@ -47,9 +52,11 @@ public class SimpleMergerTest {
 		File targetFile = new File("target/test-classes/unit/simple_merger_2_" + UUID.randomUUID().toString() + ".properties");
 		List<File> sourceFiles = getSourceFiles("src/test/resources/unit/nicely_formatted.properties", "src/test/resources/unit/all_formats.properties");
 
-		new SimpleMerger(logger).mergeTo(targetFile, sourceFiles);
+		SimpleMerger merger = new SimpleMerger();
+		PropertiesConfiguration actualProperties = merger.merge(sourceFiles);
+		savePropertiesTo(targetFile, actualProperties, generateComment(merger.getClass()));
 
-		String expectedProperties = readExpectedProperties("src/test/resources/unit/nicely_formatted_merged.properties", SimpleMerger.class);
+		String expectedProperties = readExpectedProperties("src/test/resources/unit/nicely_formatted_merged.properties", merger.getClass());
 		assertThat(readProperties(targetFile), is(expectedProperties));
 	}
 }
