@@ -29,7 +29,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<javaVersion>1.6</javaVersion>
 		<mavenVersion>2.2.1</mavenVersion>
-		<mavenPluginVersion>3.1</mavenPluginVersion>
+		<mavenPluginVersion>3.3</mavenPluginVersion>
 		<pluginTestingVersion>1.2</pluginTestingVersion>
 		<mavenFilteringVersion>1.1</mavenFilteringVersion>
 	</properties>
@@ -94,7 +94,7 @@
 		<dependency>
 			<groupId>org.codehaus.plexus</groupId>
 			<artifactId>plexus-utils</artifactId>
-			<version>3.0.4</version>
+			<version>3.0.17</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -134,9 +134,24 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-plugin-plugin</artifactId>
+				<version>${mavenPluginVersion}</version>
 				<configuration>
 					<skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
 				</configuration>
+				<executions>
+					<execution>
+						<id>mojo-descriptor</id>
+						<goals>
+							<goal>descriptor</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>help-goal</id>
+						<goals>
+							<goal>helpmojo</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
@@ -182,32 +197,5 @@
 			    <version>2.2.0</version>
 			</plugin>
 		</plugins>
-
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-plugin-plugin</artifactId>
-					<version>${mavenPluginVersion}</version>
-					<configuration>
-						<skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-					</configuration>
-					<executions>
-						<execution>
-							<id>mojo-descriptor</id>
-							<goals>
-								<goal>descriptor</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>help-goal</id>
-							<goals>
-								<goal>helpmojo</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 </project>
