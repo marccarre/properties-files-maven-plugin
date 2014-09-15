@@ -5,6 +5,7 @@ A Maven plugin to manipulate properties files in an easy way.
 Features:
   - Merge multiple properties files into a single one.
   - Merge multiple properties files into a single one, in parallel.
+  - Resources filtering (using System, Maven and merged properties).
 
 *******************************************************************************
 **Example #1** - Merge using default merger (parallel merger):
@@ -84,6 +85,34 @@ Features:
                                     </includes>
                                 </sourceFileSet>
                             </sourceFileSets>
+                        </operation>
+                    </operations>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+**Example #3** - Merge using resource filtering:
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.carmatech.maven</groupId>
+                <artifactId>properties-files-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <operations>
+                        <operation>
+                            <filtering>true</filtering>
+                            [...]
                         </operation>
                     </operations>
                 </configuration>
