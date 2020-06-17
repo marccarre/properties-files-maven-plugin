@@ -68,7 +68,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<javaVersion>1.7</javaVersion>
 		<mavenVersion>2.2.1</mavenVersion>
-		<mavenPluginVersion>3.3</mavenPluginVersion>
+		<mavenPluginVersion>3.6.0</mavenPluginVersion>
 		<pluginTestingVersion>1.2</pluginTestingVersion>
 		<mavenFilteringVersion>1.1</mavenFilteringVersion>
 		<gitRepo>git@github.com:marccarre/properties-files-maven-plugin.git</gitRepo>
