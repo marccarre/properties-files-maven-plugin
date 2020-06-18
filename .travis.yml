@@ -1,9 +1,12 @@
 language: java
 dist: trusty
 jdk:
+  - openjdk7
   - openjdk8
   - openjdk10
   - openjdk11
+  - oraclejdk8
   - oraclejdk9
+  - oraclejdk11
 after_success:
   - mvn clean test coveralls:jacoco
